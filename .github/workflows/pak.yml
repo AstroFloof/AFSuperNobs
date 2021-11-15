@@ -7,10 +7,6 @@ on:
     branches:
       - master
       - ci
-  pull_request:
-    branches:
-      - master
-      - ci
   workflow_dispatch:
       
       
@@ -18,21 +14,35 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: Alpakitnt
+      - name: Alpakit
         run: |
           from subprocess import run
-          from json impord load
-          secrets = load("secrets.json")
+          from json import load
+          secrets = load('secrets.env')
           uproject = f'"{secrets['PROJDIR']}\\FactoryGame.uproject"'
           cli = [
             f'"{secrets["UE4DIR"]}\\Build\\BatchFiles\\RunUAT.bat"',
-            f'-ScriptsForProject={uproject}',
+            f'-ScriptsForProject="{uproject}"',
             'PackagePlugin',
-            f'-Project={uproject}',
+            f'-Project="{uproject}"',
             '-PluginName="AFSuperNobs"',
-            '-CopyToGameDir',
-            '-GameDir="{secrets["GAMEDIR"]}"'
           ]
           run(cli)
           exit()
         shell: python
+
+      - name: Optimize and release zip
+        run: |
+          from zopfli import ZipFile
+          from zipfile import ZIP_DEFLATED
+          from json import load
+          secrets = load('secrets.env')
+          modzip = secrets['PROJDIR'] + '\\Saved\\ArchivedPlugins\\WindowsNoEditor\\AFSuperNobs.zip'
+          with (ZipFile(modzip) as zr, ZipFile('tmp', 'w', ZIP_DEFLATED, True) as zw):
+            il = zr.infolist()
+            for i in range(0, len(il)):
+              zi = il[i]
+              print('Processing', zi.filename, i+1, '/', len(il))
+              zw.writestr(zi, zr.read(zi))
+        shell: python
+          
