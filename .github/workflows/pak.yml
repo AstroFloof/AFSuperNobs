@@ -19,7 +19,7 @@ jobs:
           from subprocess import run
           from json import load
           secrets = load('secrets.env')
-          uproject = f'"{secrets['PROJDIR']}\\FactoryGame.uproject"'
+          uproject = f'"{secrets["PROJDIR"]}\\FactoryGame.uproject"'
           cli = [
             f'"{secrets["UE4DIR"]}\\Build\\BatchFiles\\RunUAT.bat"',
             f'-ScriptsForProject="{uproject}"',
