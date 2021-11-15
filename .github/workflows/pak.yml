@@ -19,5 +19,20 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Alpakitnt
-        run: ${engineLocation}\Build\BatchFiles\RunUAT.bat -ScriptsForProject="${projectLocation}\FactoryGame.uproject" PackagePlugin -Project="${projectLocation}\FactoryGame.uproject" -PluginName="AFSuperNobs" -CopyToGameDir -GameDir="{gameLocation}"
-    
+        run: |
+          from subprocess import run
+          from json impord load
+          secrets = load("secrets.json")
+          uproject = f'"{secrets['PROJDIR']}\\FactoryGame.uproject"'
+          cli = [
+            f'"{secrets["UE4DIR"]}\\Build\\BatchFiles\\RunUAT.bat"',
+            f'-ScriptsForProject={uproject}',
+            'PackagePlugin',
+            f'-Project={uproject}',
+            '-PluginName="AFSuperNobs"',
+            '-CopyToGameDir',
+            '-GameDir="{secrets["GAMEDIR"]}"'
+          ]
+          run(cli)
+          exit()
+        shell: python
