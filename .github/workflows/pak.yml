@@ -60,7 +60,7 @@ jobs:
           .\\ue4\\lb\\win\\Engine\\Build\\BatchFiles\\RunUAT.bat -ScriptsForProject="$Env:GITHUB_WORKSPACE\\SML\\FactoryGame.uproject" PackagePlugin -Project="$Env:GITHUB_WORKSPACE\\SML\\FactoryGame.uproject" -PluginName="AFSuperNobs" -GameDir="%SF_GAME_DIR%"
 
       - name: Archive SML artifact
-        uses: actions/upload-artifact@test
+        uses: actions/upload-artifact@v2
         with:
-          name: sml
+          name: ci-test
           path: SML\\Saved\\ArchivedPlugins\\WindowsNoEditor\\AFSuperNobs.zip
