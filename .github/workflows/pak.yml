@@ -1,14 +1,11 @@
-name: pak
+name: pak and push
 
 on:
-  # Trigger the workflow on push or pull request,
-  # but only for the main branch
   push:
     branches:
       - master
       - ci
   workflow_dispatch:
-      
       
 jobs:
   build:
@@ -18,7 +15,8 @@ jobs:
         run: |
           from subprocess import run
           from json import load
-          secrets = load('secrets.env')
+          with open('secrets.env') as env:
+            secrets = load(env)
           uproject = f'"{secrets["PROJDIR"]}\\FactoryGame.uproject"'
           cli = [
             f'"{secrets["UE4DIR"]}\\Build\\BatchFiles\\RunUAT.bat"',
@@ -31,12 +29,13 @@ jobs:
           exit()
         shell: python
 
-      - name: Optimize and release zip
+      - name: Optimize and write zip
         run: |
           from zopfli import ZipFile
           from zipfile import ZIP_DEFLATED
           from json import load
-          secrets = load('secrets.env')
+          with open('secrets.env') as env:
+            secrets = load(env)
           modzip = secrets['PROJDIR'] + '\\Saved\\ArchivedPlugins\\WindowsNoEditor\\AFSuperNobs.zip'
           with (ZipFile(modzip) as zr, ZipFile('tmp', 'w', ZIP_DEFLATED, True) as zw):
             il = zr.infolist()
@@ -45,4 +44,10 @@ jobs:
               print('Processing', zi.filename, i+1, '/', len(il))
               zw.writestr(zi, zr.read(zi))
         shell: python
+        
+      - name: Release zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: AFSuperNobs
+          path: tmp
           
