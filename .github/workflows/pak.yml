@@ -16,29 +16,67 @@ jobs:
     
       - name: Print mod reference
         run: echo ${{ env.MOD_REF }}
-    
+
       - name: Alpakit
         run: |
           $uproject=@"
           "${{ secrets.PROJDIR }}/FactoryGame.uproject"
           "@
           $run=@"
+
           "${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat" -ScriptsForProject=$uproject PackagePlugin -Project=$uproject -PluginName="${{ env.MOD_REF }}"
+
           "@
           iex "& $run"
 
       - name: Optimize and write zipped mod contents
         run: |
-          from zopfli import ZipFile
           from zipfile import ZIP_DEFLATED
+          from zopfli import ZipFile #upm package(zopflipy)
+          from json import loads, dumps
+          
+          uplugin = dict()
           modzip = '${{ secrets.PROJDIR }}/Saved/ArchivedPlugins/WindowsNoEditor/${{ env.MOD_REF }}.zip'
-          with (ZipFile(modzip) as zr, ZipFile('${{ env.MOD_REF }}.zip', 'w', ZIP_DEFLATED, True) as zw):
-            il = zr.infolist()
-            for i in range(0, len(il)):
-              zi = il[i]
-              print('Processing', zi.filename, i+1, '/', len(il), end='... ')
-              zw.writestr(zi, zr.read(zi))
-              print('done!')
+          
+          with ZipFile("${{ env.MOD_REF }}.zip", 'w', ZIP_DEFLATED, True) as zw:
+            with ZipFile(modzip) as zr:
+              ifl = zr.infolist()
+              for i in range(0, len(ifl)):
+                zi = ifl[i]
+                print(
+                  f"Name: {zi.filename}",
+                  f"Size: {zi.file_size} bytes",
+                  f"File {i+1} of {len(ifl)}",
+                  sep='\n', end=' ... '
+                )
+                uplugin.update(loads(zr.read(zi)) \
+                         if zi.filename.endswith(".uplugin") \
+                         else {})
+                zw.writestr(zi, zr.read(zi))
+                print("done!")
+                
+            mod_items = []
+            for path in zw.namelist():
+              if path.endswith(".pak"):
+                mod_items += [(path, "pak")]
+              elif path.endswith(".dll"):
+                mod_items += [(path, "sml_mod")]
+                
+            data = {
+              "mod_reference": "${{ env.MOD_REF }}",
+              "name": uplugin["FriendlyName"],
+              "version": uplugin["VersionName"],
+              "description": uplugin["Description"],
+              "authors": uplugin['CreatedBy'],
+              "objects": [{"type": type, "path": path} for path, type in mod_items],
+              "dependencies": {plug["Name"]: plug["SemVersion"] for plug in uplugin["Plugins"]}
+            }
+            print("Writing data.json")
+            print(data)
+            zw.writestr("data.json", dumps(data))
+            print("Items:\n", "\t\n".join(zw.namelist()))
+            
+          print("Operation Complete.")
         shell: python
       
       - name: Release zipped mod contents
