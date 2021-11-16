@@ -9,16 +9,23 @@ on:
       
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: windows-latest
+    env:
+      MOD_REF: ${{ github.event.repository.name }}
     steps:
     
+      - name: Print mod reference
+        run: echo ${{ env.MOD_REF }}
+
       - name: Alpakit
         run: |
           $uproject=@"
           "${{ secrets.PROJDIR }}/FactoryGame.uproject"
           "@
           $run=@"
-          "${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat" -ScriptsForProject=$uproject PackagePlugin -Project=$uproject -PluginName="AFSuperNobs"
+
+          "${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat" -ScriptsForProject=$uproject PackagePlugin -Project=$uproject -PluginName="${{ env.MOD_REF }}"
+
           "@
           iex "& $run"
 
@@ -27,10 +34,12 @@ jobs:
           from zipfile import ZIP_DEFLATED
           from zopfli import ZipFile #upm package(zopflipy)
           from json import loads, dumps
-
+          
           uplugin = dict()
-          with ZipFile("Release.zip", 'w', ZIP_DEFLATED, True) as zw:
-            with ZipFile("SML.zip") as zr:
+          modzip = '${{ secrets.PROJDIR }}/Saved/ArchivedPlugins/WindowsNoEditor/${{ env.MOD_REF }}.zip'
+          
+          with ZipFile("${{ env.MOD_REF }}.zip", 'w', ZIP_DEFLATED, True) as zw:
+            with ZipFile(modzip) as zr:
               ifl = zr.infolist()
               for i in range(0, len(ifl)):
                 zi = ifl[i]
@@ -45,12 +54,14 @@ jobs:
                          else {})
                 zw.writestr(zi, zr.read(zi))
                 print("done!")
+                
             mod_items = []
             for path in zw.namelist():
               if path.endswith(".pak"):
                 mod_items += [(path, "pak")]
               elif path.endswith(".dll"):
                 mod_items += [(path, "sml_mod")]
+                
             data = {
               "mod_reference": "${{ env.MOD_REF }}",
               "name": uplugin["FriendlyName"],
@@ -64,6 +75,7 @@ jobs:
             print(data)
             zw.writestr("data.json", dumps(data))
             print("Items:\n", "\t\n".join(zw.namelist()))
+            
           print("Operation Complete.")
         shell: python
       
@@ -77,4 +89,4 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: false
           title: "Latest Release"
-          files: AFSuperNobs.zip
+          files: ${{ env.MOD_REF }}.zip
