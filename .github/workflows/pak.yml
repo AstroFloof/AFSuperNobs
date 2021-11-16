@@ -33,7 +33,6 @@ jobs:
         run: |
           from zipfile import ZIP_DEFLATED
           from zopfli import ZipFile #upm package(zopflipy)
-          from json import loads, dumps
           
           modzip = '${{ secrets.PROJDIR }}/Saved/ArchivedPlugins/WindowsNoEditor/${{ env.MOD_REF }}.zip'
           
