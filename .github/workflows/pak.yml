@@ -14,9 +14,9 @@ jobs:
     
       - name: Alpakit
         run: |
-          $uproject = '"${{ secrets.PROJDIR }}/FactoryGame.uproject"'
-          sudo "${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat" -ScriptsForProject=$uproject PackagePlugin -Project=$uproject -PluginName="AFSuperNobs"
-        shell: bash
+          $uproject='"${{ secrets.PROJDIR }}/FactoryGame.uproject"'
+          "${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat" -ScriptsForProject=$uproject PackagePlugin -Project=$uproject -PluginName="AFSuperNobs"
+        shell: pwsh
 
       - name: Optimize and write zip
         run: |
