@@ -28,7 +28,7 @@ jobs:
           from zipfile import ZIP_DEFLATED
           from json import load
           modzip = '${{ secrets.PROJDIR }}/Saved/ArchivedPlugins/WindowsNoEditor/AFSuperNobs.zip'
-          with (ZipFile(modzip) as zr, ZipFile('tmp.zip', 'w', ZIP_DEFLATED, True) as zw):
+          with (ZipFile(modzip) as zr, ZipFile('AFSuperNobs.zip', 'w', ZIP_DEFLATED, True) as zw):
             il = zr.infolist()
             for i in range(0, len(il)):
               zi = il[i]
@@ -46,6 +46,6 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
-          prerelease: true
-          title: "Test Build"
-          files: tmp.zip
+          prerelease: false
+          title: "Latest Release"
+          files: AFSuperNobs.zip
