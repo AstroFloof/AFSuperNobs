@@ -23,9 +23,7 @@ jobs:
           "${{ secrets.PROJDIR }}/FactoryGame.uproject"
           "@
           $run=@"
-
           "${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat" -ScriptsForProject=$uproject PackagePlugin -Project=$uproject -PluginName="${{ env.MOD_REF }}"
-
           "@
           iex "& $run"
 
