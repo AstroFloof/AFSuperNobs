@@ -17,7 +17,13 @@ jobs:
           from subprocess import run
           from json import load
           uproject = '"${{ secrets.PROJDIR }}\\FactoryGame.uproject"'
-          cli = ['"${{ secrets.UE4DIR }}\\Build\\BatchFiles\\RunUAT.bat"', f'-ScriptsForProject="{uproject}"', 'PackagePlugin', f'-Project="{uproject}"', '-PluginName="AFSuperNobs"',]
+          cli = [
+            '"${{ secrets.UE4DIR }}\\Build\\BatchFiles\\RunUAT.bat"', 
+            f'-ScriptsForProject="{uproject}"', 
+            'PackagePlugin',
+            f'-Project="{uproject}"', 
+            '-PluginName="AFSuperNobs"',
+          ]
           run(cli)
         shell: python
 
