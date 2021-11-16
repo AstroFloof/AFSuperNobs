@@ -35,7 +35,6 @@ jobs:
           from zopfli import ZipFile #upm package(zopflipy)
           from json import loads, dumps
           
-          uplugin = dict()
           modzip = '${{ secrets.PROJDIR }}/Saved/ArchivedPlugins/WindowsNoEditor/${{ env.MOD_REF }}.zip'
           
           with ZipFile("${{ env.MOD_REF }}.zip", 'w', ZIP_DEFLATED, True) as zw:
@@ -49,31 +48,9 @@ jobs:
                   f"File {i+1} of {len(ifl)}",
                   sep='\n', end=' ... '
                 )
-                uplugin.update(loads(zr.read(zi)) \
-                         if zi.filename.endswith(".uplugin") \
-                         else {})
+
                 zw.writestr(zi, zr.read(zi))
-                print("done!")
-                
-            mod_items = []
-            for path in zw.namelist():
-              if path.endswith(".pak"):
-                mod_items += [(path, "pak")]
-              elif path.endswith(".dll"):
-                mod_items += [(path, "sml_mod")]
-                
-            data = {
-              "mod_reference": "${{ env.MOD_REF }}",
-              "name": uplugin["FriendlyName"],
-              "version": uplugin["VersionName"],
-              "description": uplugin["Description"],
-              "authors": uplugin['CreatedBy'],
-              "objects": [{"type": type, "path": path} for path, type in mod_items],
-              "dependencies": {plug["Name"]: plug["SemVersion"] for plug in uplugin["Plugins"]}
-            }
-            print("Writing data.json")
-            print(data)
-            zw.writestr("data.json", dumps(data))
+
             print("Items:\n", "\t\n".join(zw.namelist()))
             
           print("Operation Complete.")
