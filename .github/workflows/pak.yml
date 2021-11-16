@@ -22,11 +22,10 @@ jobs:
           "@
           iex "& $run"
 
-      - name: Optimize and write zip
+      - name: Optimize and write zipped mod contents
         run: |
           from zopfli import ZipFile
           from zipfile import ZIP_DEFLATED
-          from json import load
           modzip = '${{ secrets.PROJDIR }}/Saved/ArchivedPlugins/WindowsNoEditor/AFSuperNobs.zip'
           with (ZipFile(modzip) as zr, ZipFile('AFSuperNobs.zip', 'w', ZIP_DEFLATED, True) as zw):
             il = zr.infolist()
@@ -37,8 +36,7 @@ jobs:
               print('done!')
         shell: python
       
-
-      - name: Release zip
+      - name: Release zipped mod contents
         run: |
           echo "done!"
 
