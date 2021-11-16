@@ -64,3 +64,30 @@ jobs:
           prerelease: false
           title: "Latest Release"
           files: ${{ env.MOD_REF }}.zip
+
+  status:
+    runs-on: self-hosted
+    if: ${{ always() }}
+    needs: build
+    env:
+      MOD_REF: ${{ github.event.repository.name }}
+    steps:
+      - name: Build Success
+        if: ${{ success() }} 
+        run: |
+          from requests import post
+          urls = ${{ secrets.webhooks }}
+          for url in urls
+            post(url, json={'embeds': [{"title": "${{ env.MOD_REF }} Build Success!", "description": "[![pak and push](https://github.com/AstroFloof/AFSuperNobs/actions/workflows/pak.yml/badge.svg)](https://github.com/AstroFloof/AFSuperNobs/actions/workflows/pak.yml)"}]})
+        shell: python
+        
+      - name: Build Failure
+        if: ${{ failure() }} 
+        run: |
+          from requests import post
+          urls = ${{ secrets.webhooks }}
+          for url in urls
+            post(url, json={'embeds': [{"title": "${{ env.MOD_REF }} Build Failure!", "description": "[![pak and push](https://github.com/AstroFloof/AFSuperNobs/actions/workflows/pak.yml/badge.svg)](https://github.com/AstroFloof/AFSuperNobs/actions/workflows/pak.yml)"}]})
+        shell: python
+        
+  
