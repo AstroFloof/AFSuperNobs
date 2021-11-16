@@ -11,22 +11,20 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
+    
       - name: Alpakit
         run: |
           from subprocess import run
           from json import load
-          with open('${{ GITHUB_WORKSPACE }}\\secrets.env') as env:
-            secrets = load(env)
-          uproject = f'"{secrets["PROJDIR"]}\\FactoryGame.uproject"'
+          uproject = '"${{ secrets.PROJDIR }}\\FactoryGame.uproject"'
           cli = [
-            f'"{secrets["UE4DIR"]}\\Build\\BatchFiles\\RunUAT.bat"',
+            '"${{ secrets.UE4DIR }}\\Build\\BatchFiles\\RunUAT.bat"',
             f'-ScriptsForProject="{uproject}"',
             'PackagePlugin',
             f'-Project="{uproject}"',
             '-PluginName="AFSuperNobs"',
           ]
           run(cli)
-          exit()
         shell: python
 
       - name: Optimize and write zip
@@ -34,15 +32,14 @@ jobs:
           from zopfli import ZipFile
           from zipfile import ZIP_DEFLATED
           from json import load
-          with open('${{ GITHUB_WORKSPACE }}\\secrets.env') as env:
-            secrets = load(env)
-          modzip = secrets['PROJDIR'] + '\\Saved\\ArchivedPlugins\\WindowsNoEditor\\AFSuperNobs.zip'
+          modzip = '${{ secrets.PROJDIR }}\\Saved\\ArchivedPlugins\\WindowsNoEditor\\AFSuperNobs.zip'
           with (ZipFile(modzip) as zr, ZipFile('tmp', 'w', ZIP_DEFLATED, True) as zw):
             il = zr.infolist()
             for i in range(0, len(il)):
               zi = il[i]
-              print('Processing', zi.filename, i+1, '/', len(il))
+              print('Processing', zi.filename, i+1, '/', len(il), end='... ')
               zw.writestr(zi, zr.read(zi))
+              print('done!')
         shell: python
         
       - name: Release zip
