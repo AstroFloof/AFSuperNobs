@@ -75,10 +75,10 @@ jobs:
       - name: Build Success
         if: ${{ success() }} 
         run: |
-          curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Success!", "description": "[![pak and push](https://github.com/AstroFloof/AFSuperNobs/actions/workflows/pak.yml/badge.svg)](https://github.com/AstroFloof/AFSuperNobs/actions/workflows/pak.yml)"}]}' ${{ secrets.webhooks }}
+          curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Success!", "color": 65280}]}' ${{ secrets.WEBHOOKS }}
         
       - name: Build Failure
         if: ${{ failure() }} 
         run: |
-          curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Faliure!", "description": "[![pak and push](https://github.com/AstroFloof/AFSuperNobs/actions/workflows/pak.yml/badge.svg)](https://github.com/AstroFloof/AFSuperNobs/actions/workflows/pak.yml)"}]}' ${{ secrets.webhooks }}
+          curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Failure!", "color": 16711680}]}' ${{ secrets.WEBHOOKS }}
   
