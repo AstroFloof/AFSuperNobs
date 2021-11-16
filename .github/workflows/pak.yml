@@ -1,0 +1,49 @@
+name: pak and push
+
+on:
+  push:
+    branches:
+      - master
+      - ci
+  workflow_dispatch:
+      
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    
+      - name: Alpakit
+        run: |
+          $uproject=@"
+          "${{ secrets.PROJDIR }}/FactoryGame.uproject"
+          "@
+          $run=@"
+          "${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat" -ScriptsForProject=$uproject PackagePlugin -Project=$uproject -PluginName="AFSuperNobs"
+          "@
+          iex "& $run"
+
+      - name: Optimize and write zipped mod contents
+        run: |
+          from zopfli import ZipFile
+          from zipfile import ZIP_DEFLATED
+          modzip = '${{ secrets.PROJDIR }}/Saved/ArchivedPlugins/WindowsNoEditor/AFSuperNobs.zip'
+          with (ZipFile(modzip) as zr, ZipFile('AFSuperNobs.zip', 'w', ZIP_DEFLATED, True) as zw):
+            il = zr.infolist()
+            for i in range(0, len(il)):
+              zi = il[i]
+              print('Processing', zi.filename, i+1, '/', len(il), end='... ')
+              zw.writestr(zi, zr.read(zi))
+              print('done!')
+        shell: python
+      
+      - name: Release zipped mod contents
+        run: |
+          echo "done!"
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Latest Release"
+          files: AFSuperNobs.zip
