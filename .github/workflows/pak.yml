@@ -15,7 +15,7 @@ jobs:
         run: |
           from subprocess import run
           from json import load
-          with open('secrets.env') as env:
+          with open('$GITHUB_WORKSPACE\\secrets.env') as env:
             secrets = load(env)
           uproject = f'"{secrets["PROJDIR"]}\\FactoryGame.uproject"'
           cli = [
@@ -34,7 +34,7 @@ jobs:
           from zopfli import ZipFile
           from zipfile import ZIP_DEFLATED
           from json import load
-          with open('secrets.env') as env:
+          with open('$GITHUB_WORKSPACE\\secrets.env') as env:
             secrets = load(env)
           modzip = secrets['PROJDIR'] + '\\Saved\\ArchivedPlugins\\WindowsNoEditor\\AFSuperNobs.zip'
           with (ZipFile(modzip) as zr, ZipFile('tmp', 'w', ZIP_DEFLATED, True) as zw):
