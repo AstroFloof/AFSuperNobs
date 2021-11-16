@@ -14,18 +14,9 @@ jobs:
     
       - name: Alpakit
         run: |
-          from subprocess import run
-          from json import load
-          uproject = '"${{ secrets.PROJDIR }}/FactoryGame.uproject"'
-          cli = [
-            '"${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat"', 
-            f'-ScriptsForProject="{uproject}"', 
-            'PackagePlugin',
-            f'-Project="{uproject}"', 
-            '-PluginName="AFSuperNobs"',
-          ]
-          run(cli)
-        shell: python
+          $uproject = '"${{ secrets.PROJDIR }}/FactoryGame.uproject"'
+          sudo "${{ secrets.UE4DIR }}/Engine/Build/BatchFiles/RunUAT.bat" -ScriptsForProject=$uproject PackagePlugin -Project=$uproject -PluginName="AFSuperNobs"
+        shell: bash
 
       - name: Optimize and write zip
         run: |
