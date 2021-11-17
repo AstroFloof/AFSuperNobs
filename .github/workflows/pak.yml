@@ -77,12 +77,12 @@ jobs:
         run: echo ${{ needs.build.outputs.build-status }}
     
       - name: Build Success
-        if: ${{ needs.build.outputs.build-status }} == "Success" 
+        if: ${{ needs.build.outputs.build-status }} == "success" 
         run: |
           curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Success!", "color": 65280}]}' '${{ secrets.WEBHOOKS }}'
         
       - name: Build Failure
-        if: ${{ needs.build.outputs.build-status }} == "Failure" 
+        if: ${{ needs.build.outputs.build-status }} == "failure" 
         run: |
           curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Failure!", "color": 16711680}]}' '${{ secrets.WEBHOOKS }}'
   
