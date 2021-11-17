@@ -72,17 +72,12 @@ jobs:
     needs: build
     env:
       MOD_REF: ${{ github.event.repository.name }}
-    steps:  
-      - name: wat
-        run: echo ${{ needs.build.outputs.build-status }}
-    
-      - name: Build Success
+    steps:      
+      - name: Send Build Status
         if: ${{ needs.build.outputs.build-status }} == "success" 
         run: |
-          curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Success!", "color": 65280}]}' '${{ secrets.WEBHOOKS }}'
-        
-      - name: Build Failure
-        if: ${{ needs.build.outputs.build-status }} == "failure" 
-        run: |
-          curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Failure!", "color": 16711680}]}' '${{ secrets.WEBHOOKS }}'
-  
+          if [ ${{ needs.build.outputs.build-status }} == "success" ]; then
+            curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Success!", "color": 65280}]}' '${{ secrets.WEBHOOKS }}'
+          elif [ ${{ needs.build.outputs.build-status }} == "failure" ]; then
+            curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Failure!", "color": 16711680}]}' '${{ secrets.WEBHOOKS }}'
+          fi
