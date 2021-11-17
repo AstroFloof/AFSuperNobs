@@ -15,7 +15,7 @@ jobs:
     steps:
     
       - name: Print mod reference
-        run: echo ${{ env.MOD_REF }}
+        run: echo "${{ env.MOD_REF }}"
 
       - name: Alpakit
         run: |
@@ -54,16 +54,17 @@ jobs:
         shell: python
       
       - name: Release zipped mod contents
-        run: |
-          echo "done!"
-
-      - uses: "marvinpinto/action-automatic-releases@latest"
+        if: ($(( github.ref_type }} == "branch") && (${{ github.ref_name }} == "master")
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: false
           title: "Latest Release"
           files: ${{ env.MOD_REF }}.zip
+      
+    outputs:
+      build-status: ${{ job.status }}
 
   status:
     runs-on: ubuntu-latest
@@ -71,14 +72,12 @@ jobs:
     needs: build
     env:
       MOD_REF: ${{ github.event.repository.name }}
-    steps:
-      - name: Build Success
-        if: ${{ success() }} 
+    steps:      
+      - name: Send Build Status
+        if: ${{ needs.build.outputs.build-status }} == "success" 
         run: |
-          curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Success!", "color": 65280}]}' ${{ secrets.WEBHOOKS }}
-        
-      - name: Build Failure
-        if: ${{ failure() }} 
-        run: |
-          curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Failure!", "color": 16711680}]}' ${{ secrets.WEBHOOKS }}
-  
+          if [ ${{ needs.build.outputs.build-status }} == "success" ]; then
+            curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Success!", "color": 65280}]}' '${{ secrets.WEBHOOKS }}'
+          elif [ ${{ needs.build.outputs.build-status }} == "failure" ]; then
+            curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Failure!", "color": 16711680}]}' '${{ secrets.WEBHOOKS }}'
+          fi
