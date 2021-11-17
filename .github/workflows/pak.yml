@@ -73,6 +73,9 @@ jobs:
     env:
       MOD_REF: ${{ github.event.repository.name }}
     steps:  
+      - name: wat
+        run: echo ${{ needs.build.outputs.build-status }}
+    
       - name: Build Success
         if: ${{ needs.build.outputs.build-status }} == "Success" 
         run: |
