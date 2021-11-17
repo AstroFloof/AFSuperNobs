@@ -62,6 +62,9 @@ jobs:
           prerelease: false
           title: "Latest Release"
           files: ${{ env.MOD_REF }}.zip
+      
+    outputs:
+      build-status: ${{ job.status }}
 
   status:
     runs-on: ubuntu-latest
@@ -71,12 +74,12 @@ jobs:
       MOD_REF: ${{ github.event.repository.name }}
     steps:  
       - name: Build Success
-        if: ${{ success() }} 
+        if: ${{ needs.build.outputs.build-status }} == "Success" 
         run: |
           curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Success!", "color": 65280}]}' '${{ secrets.WEBHOOKS }}'
         
       - name: Build Failure
-        if: ${{ failure() }} 
+        if: ${{ needs.build.outputs.build-status }} == "Failure" 
         run: |
           curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} Build Failure!", "color": 16711680}]}' '${{ secrets.WEBHOOKS }}'
   
