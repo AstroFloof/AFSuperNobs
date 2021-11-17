@@ -69,10 +69,7 @@ jobs:
     needs: build
     env:
       MOD_REF: ${{ github.event.repository.name }}
-    steps:
-      - name: tmp
-        run: echo '${{ secrets.WEBHOOKS }}'
-    
+    steps:  
       - name: Build Success
         if: ${{ success() }} 
         run: |
