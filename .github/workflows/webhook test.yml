@@ -1,6 +1,11 @@
-name: pak and push
+name: webhook tes
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - ci
+    
       
 jobs:
   status:
