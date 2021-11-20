@@ -1,0 +1,12 @@
+name: pak and push
+
+on: workflow_dispatch
+      
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    env:
+      MOD_REF: ${{ github.event.repository.name }}
+    steps:      
+      - name: Send webhook Statustest
+        run: curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} webhook test successful!", "color": 11184810}]}' '${{ secrets.WEBHOOKS }}'
