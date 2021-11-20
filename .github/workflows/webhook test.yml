@@ -9,4 +9,5 @@ jobs:
       MOD_REF: ${{ github.event.repository.name }}
     steps:      
       - name: Send webhook Statustest
-        run: curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} webhook test successful!", "color": 11184810}]}' '${{ secrets.WEBHOOKS }}'
+        run: |
+            curl -s -H "Content-Type: application/json" -d '{"embeds": [{"title": "${{ env.MOD_REF }} webhook test successful!", "color": 11184810}]}' '${{ secrets.WEBHOOKS }}'
