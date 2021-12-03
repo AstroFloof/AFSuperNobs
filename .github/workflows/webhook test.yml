@@ -1,12 +1,8 @@
-name: webhook tes
+name: webhook test
 
 on: 
   workflow_dispatch:
-  push:
-    branches:
-      - ci
     
-      
 jobs:
   status:
     runs-on: ubuntu-latest
