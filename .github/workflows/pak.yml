@@ -19,6 +19,9 @@ jobs:
 
       - name: Alpakit
         run: |
+          Set-Location "${{ secrets.PROJDIR }}/Plugins/${{ env.MOD_REF }}"
+          git checkout master
+          git pull
           $uproject=@"
           "${{ secrets.PROJDIR }}/FactoryGame.uproject"
           "@
