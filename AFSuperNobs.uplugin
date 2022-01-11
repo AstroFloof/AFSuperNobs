@@ -1,8 +1,8 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"SemVersion": "1.1.2",
-	"VersionName": "1.1.2",
+	"SemVersion": "1.1.3",
+	"VersionName": "1.1.3",
 	"FriendlyName": "Satisfactory Explosions",
 	"Description": "This mod adds two overpowered nobelisks for the price of one! Both stack up to 100 and can be thrown as fast as you can click (try not to damage your fingers). One explodes on impact, the other does not.",
 	"Category": "Modding",
