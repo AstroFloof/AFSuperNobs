@@ -9,7 +9,7 @@ on:
       
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: [self-hosted, Windows, X64, mod-ci]
     env:
       MOD_REF: ${{ github.event.repository.name }}
     steps:
